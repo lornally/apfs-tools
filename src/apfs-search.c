@@ -238,7 +238,7 @@ int main(int argc, char** argv) {
             }
 
             /** Search for Virtual objects with a given Virtual OID **/
-            if (false) {
+            if (true) {
                 if (is_cksum_valid(block)) {
                     if ( (block->o_type & OBJ_STORAGETYPE_MASK)  ==  OBJ_VIRTUAL ) {
                         switch (block->o_oid) {
@@ -270,6 +270,7 @@ int main(int argc, char** argv) {
 
                     if ( ! (node->btn_flags & BTNODE_LEAF) ) {
                         // Not a leaf node; look at next block
+                        printf("NOT A LEAF\n");
                         continue;
                     }
 
@@ -308,8 +309,8 @@ int main(int argc, char** argv) {
                 }
             }
 
-            /** Search for dentries of items with certain names **/
-            if (false) {
+            /** Search for dentries of items with certain names/properties **/
+            if (true) {
                 if (   is_cksum_valid(block)
                     && is_btree_node_phys(block)
                     && is_fs_tree(block)
@@ -345,25 +346,39 @@ int main(int argc, char** argv) {
 
                         j_key_t* hdr = key_start + toc_entry->k.off;
                         uint8_t record_type = (hdr->obj_id_and_type & OBJ_TYPE_MASK) >> OBJ_TYPE_SHIFT;
-                        if (record_type != APFS_TYPE_DIR_REC) {
-                            // Not a dentry; look at next entry in this leaf node
-                            continue;
-                        }
-                        printf("DENTRY ... ");
+                        switch (record_type) {
+                            case APFS_TYPE_DIR_REC: {
+                                printf("DENTRY ... ");
 
-                        j_drec_hashed_key_t* key = hdr;
-                        j_drec_val_t* val = val_end - toc_entry->v.off;
+                                j_drec_hashed_key_t* key = hdr;
+                                j_drec_val_t* val = val_end - toc_entry->v.off;
 
-                        for (size_t j = 0; j < NUM_DENTRY_NAMES; j++) {
-                            if (strcasecmp((char*)key->name, dentry_names[j]) == 0) {
-                                num_matches_in_node++;
-                                num_matches++;
+                                for (size_t j = 0; j < NUM_DENTRY_NAMES; j++) {
+                                    if (strcasecmp((char*)key->name, dentry_names[j]) == 0) {
+                                        num_matches_in_node++;
+                                        num_matches++;
 
-                                printf("MATCHED --- query = %s --- match = %s\n", dentry_names[j], key->name);
-                                
-                                // Found a match; don't need to compare against other strings
-                                break;
-                            }
+                                        printf("MATCHED --- query = %s --- match = %s\n", dentry_names[j], key->name);
+                                        
+                                        // Found a match; don't need to compare against other strings
+                                        break;
+                                    }
+                                }
+                            } break;
+                            // case APFS_TYPE_INODE: {
+                            //     printf("INDOE ... ");
+
+                            //     j_inode_key_t* key = hdr;
+                            //     j_inode_val_t* val = val_end - toc_entry->v.off;
+
+                            //     if (val->parent_id == 0x1) {
+                            //         num_matches_in_node++;
+                            //         num_matches++;
+
+                            //         printf("MATCHED --- query = INODE 0x1 --- match = ")
+                            //     }
+                            // } break;
+                            default: break;
                         }
                     }
 
@@ -378,7 +393,7 @@ int main(int argc, char** argv) {
             }
 
             /** Search for dentries pointing to items with certain file-system object IDs **/
-            if (false) {
+            if (true) {
                 if (   is_cksum_valid(block)
                     && is_btree_node_phys(block)
                     && is_fs_tree(block)

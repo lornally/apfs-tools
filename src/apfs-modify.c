@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     printf("OK.\n");
 
     /** Copy one block to another block address **/
-    if (true) {
+    if (false) {
         long read_from  = 0xe1b61;
         long write_to   = 0xd3793;
 
@@ -600,9 +600,9 @@ int main(int argc, char** argv) {
     }
 
     /** Modify an Omap B-tree node and write the new version to disk **/
-    if (false) {
-        long read_from  = 0xe98c5;
-        long write_to   = 0xd3691;
+    if (true) {
+        long read_from  = 0x241569;
+        long write_to   = 0x241569;
 
         /** Declare data needed to edit node **/
 
@@ -613,14 +613,9 @@ int main(int argc, char** argv) {
          * - 0: The index of the entry within the node
          * - 1: The target block address
          */
-        size_t NUM_RECORDS = 6; // The number of records that will be modified; the size of the array `record_data`
+        size_t NUM_RECORDS = 1; // The number of records that will be modified; the size of the array `record_data`
         uint64_t record_data[][2] = {
-            { 50, 0xd6e9d },
-            { 66, 0xd2a9b },
-            { 75, 0xd214b },
-            { 76, 0xd2155 },
-            { 78, 0xd271b },
-            { 81, 0xd0fd1 },
+            { 11, 0x24354e }
         };
 
         /** Read the B-tree node to modify **/
@@ -661,11 +656,11 @@ int main(int argc, char** argv) {
 
         /** Write the data to disk **/
 
-        if (write_blocks(node, write_to, 1) != 1) {
-            fprintf(stderr, "\nABORT: Failed to write to block %#lx.\n", write_to);
-            return -1;
-        }
-        printf("Successfully wrote modified version of block %#lx to %#lx.\n", read_from, write_to);
+        // if (write_blocks(node, write_to, 1) != 1) {
+        //     fprintf(stderr, "\nABORT: Failed to write to block %#lx.\n", write_to);
+        //     return -1;
+        // }
+        // printf("Successfully wrote modified version of block %#lx to %#lx.\n", read_from, write_to);
 
         /** Cleanup **/
 
